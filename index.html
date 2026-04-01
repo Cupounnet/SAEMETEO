@@ -8,7 +8,7 @@
 
 <body>
 
-<h1>📊 Station météo</h1>
+<h1> Station météo</h1>
 
 <h2>Température</h2>
 <canvas id="chartTemp"></canvas>
@@ -16,7 +16,27 @@
 <h2>Humidité</h2>
 <canvas id="chartHum"></canvas>
 
+
+
 <script>
+setInterval(() => {
+
+  db.ref("capteurs/esp32").once("value").then(snapshot => {
+    const data = snapshot.val();
+
+    document.getElementById("tempInt").innerText = data.temperature;
+    document.getElementById("humInt").innerText = data.humidity;
+  });
+
+  db.ref("capteurs/mega").once("value").then(snapshot => {
+    const data = snapshot.val();
+
+    document.getElementById("tempExt").innerText = data.temperature;
+    document.getElementById("humExt").innerText = data.humidity;
+  });
+
+}, 2000);
+
 //  CONFIG FIREBASE
 const firebaseConfig = {
   apiKey: "TA_API_KEY",
