@@ -19,23 +19,13 @@
 
 
 <script>
-setInterval(() => {
+<h2> Valeurs en direct</h2>
 
-  db.ref("capteurs/esp32").once("value").then(snapshot => {
-    const data = snapshot.val();
+<p> Température intérieure : <span id="tempInt">--</span> °C</p>
+<p> Humidité intérieure : <span id="humInt">--</span> %</p>
 
-    document.getElementById("tempInt").innerText = data.temperature;
-    document.getElementById("humInt").innerText = data.humidity;
-  });
-
-  db.ref("capteurs/mega").once("value").then(snapshot => {
-    const data = snapshot.val();
-
-    document.getElementById("tempExt").innerText = data.temperature;
-    document.getElementById("humExt").innerText = data.humidity;
-  });
-
-}, 2000);
+<p> Température extérieure : <span id="tempExt">--</span> °C</p>
+<p> Humidité extérieure : <span id="humExt">--</span> %</p>
 
 //  CONFIG FIREBASE
 const firebaseConfig = {
