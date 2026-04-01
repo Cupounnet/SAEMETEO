@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Station météo</title>
+  <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+
+<body>
+
+<h1>📊 Station météo</h1>
+
+<h2>Température</h2>
+<canvas id="chartTemp"></canvas>
+
+<h2>Humidité</h2>
+<canvas id="chartHum"></canvas>
+
+<script>
+//  CONFIG FIREBASE
+const firebaseConfig = {
+  apiKey: "TA_API_KEY",
+  databaseURL: "https://sae-radio-default-rtdb.europe-west1.firebasedatabase.app"
+};
+
+firebase.initializeApp(firebaseConfig);
+
+//  Tableaux
+let labels = [];
+let tempInt = [];
+let tempExt = [];
+let humInt = [];
+let humExt = [];
+
+//  GRAPH TEMP
+const ctxTemp = document.getElementById("chartTemp").getContext("2d");
+const chartTemp = new Chart(ctxTemp, {
+  type: 'line',
+  data: {
+    labels: labels,
+    datasets: [
+      { label: "Temp Int", data: tempInt },
+      { label: "Temp Ext", data: tempExt }
+    ]
+  }
+});
+
+//  GRAPH HUM
+const ctxHum = document.getElementById("chartHum").getContext("2d");
+const chartHum = new Chart(ctxHum, {
+  type: 'line',
+  data: {
+    labels: labels,
+    datasets: [
+      { label: "Hum Int", data: humInt },
+      { label: "Hum Ext", data: humExt }
+    ]
+  }
+});
+
+// LECTURE FIREBASE
+firebase.database().ref("mesures").on("value", (snapshot) => {
+
+  const data = snapshot.val();
+
+  // reset
+  labels = [];
+  tempInt = [];
+  tempExt = [];
+  humInt = [];
+  humExt = [];
+
+  for (let key in data) {
+    labels.push(key);
+    tempInt.push(data[key].tempInt);
+    tempExt.push(data[key].tempExt);
+    humInt.push(data[key].humInt);
+    humExt.push(data[key].humExt);
+  }
+
+  // update graph temp
+  chartTemp.data.labels = labels;
+  chartTemp.data.datasets[0].data = tempInt;
+  chartTemp.data.datasets[1].data = tempExt;
+  chartTemp.update();
+
+  // update graph hum
+  chartHum.data.labels = labels;
+  chartHum.data.datasets[0].data = humInt;
+  chartHum.data.datasets[1].data = humExt;
+  chartHum.update();
+
+});
+</script>
+
+</body>
+</html>
